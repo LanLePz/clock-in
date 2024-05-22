@@ -264,11 +264,11 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
         if (todaySummary.getManHours() > 8) {
             todayManHoursText.setTextColor(greenColor);
         }
+        String needRepairHours = decimalFormat.format(Math.abs(todaySummary.getNeedRepairHours()));
+        needRepairHoursText.setText(needRepairHours);
         if (todaySummary.getAverageManHours() > 8.5) {
             averageManHoursText.setTextColor(greenColor);
         } else {
-            String needRepairHours = decimalFormat.format(todaySummary.getNeedRepairHours());
-            needRepairHoursText.setText(needRepairHours);
             needRepairHoursText.setTextColor(Color.RED);
         }
     }

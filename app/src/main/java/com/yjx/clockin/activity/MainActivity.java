@@ -131,11 +131,10 @@ public class MainActivity extends AppCompatActivity {
             todayManHoursText.setTextColor(greenColor);
         }
         String needRepairHours = decimalFormat.format(Math.abs(todaySummary.getNeedRepairHours()));
+        needRepairHoursText.setText(needRepairHours);
         if (todaySummary.getAverageManHours() > 8.5) {
-            needRepairHoursText.setText(needRepairHours);
             averageManHoursText.setTextColor(greenColor);
         } else {
-            needRepairHoursText.setText(needRepairHours);
             needRepairHoursText.setTextColor(Color.RED);
         }
     }
