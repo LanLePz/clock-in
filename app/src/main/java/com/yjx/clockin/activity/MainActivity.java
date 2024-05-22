@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                         lastClockInTime.setVisibility(View.VISIBLE);
                         clockInDao.recordClockInInfo(nowDate);
                         updateDisplaySummary();
-                        ToastUtils.toastClockIn(MainActivity.this, "记得 WeLink 打卡哦~", Color.RED, 21);
+                        ToastUtils.toastClockIn(MainActivity.this, "记得打卡哦~", Color.RED, 21);
                     }
 
                     @Override
@@ -130,10 +130,11 @@ public class MainActivity extends AppCompatActivity {
         if (todaySummary.getManHours() > 8) {
             todayManHoursText.setTextColor(greenColor);
         }
+        String needRepairHours = decimalFormat.format(Math.abs(todaySummary.getNeedRepairHours()));
         if (todaySummary.getAverageManHours() > 8.5) {
+            needRepairHoursText.setText(needRepairHours);
             averageManHoursText.setTextColor(greenColor);
         } else {
-            String needRepairHours = decimalFormat.format(todaySummary.getNeedRepairHours());
             needRepairHoursText.setText(needRepairHours);
             needRepairHoursText.setTextColor(Color.RED);
         }
