@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         needRepairHoursText.setText(needRepairHours);
         if (todaySummary.getAverageManHours() > 8.5) {
             averageManHoursText.setTextColor(greenColor);
+            needRepairHoursText.setTextColor(greenColor);
             exceedText.setText("超出工时(h)");
         } else {
             needRepairHoursText.setTextColor(Color.RED);

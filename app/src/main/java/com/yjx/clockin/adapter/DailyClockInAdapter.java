@@ -85,6 +85,8 @@ public class DailyClockInAdapter extends BaseAdapter {
         if (dailyClockInRecord.getDayHours() > 8.5) {
             int greenColor = Color.parseColor("#65CB00");
             vh.dayHours.setTextColor(greenColor);
+        } else {
+            vh.dayHours.setTextColor(Color.RED);
         }
         vh.delete = convertView.findViewById(R.id.delete_button);
         vh.delete.setOnClickListener(new View.OnClickListener(){

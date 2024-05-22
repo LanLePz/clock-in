@@ -26,6 +26,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    //release版本输出位置与文件名配置
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (buildType.name == 'release') { //只处理生产版本
+                output.outputFileName = "clock-in.apk"             // 指定输出文件名
+            }
+        }
+    }
 }
 
 dependencies {
