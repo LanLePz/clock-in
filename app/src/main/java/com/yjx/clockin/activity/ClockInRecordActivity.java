@@ -69,6 +69,8 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
     private ClockInDate clockInFirstDate;
     private ClockInDate clockInLastDate;
     private TextView needRepairHoursText;
+
+    private TextView exceedText;
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -253,6 +255,7 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
         monthManHoursText = findViewById(R.id.month_man_hours);
         averageManHoursText = findViewById(R.id.average_man_hours);
         needRepairHoursText = findViewById(R.id.need_repair_hours);
+        exceedText = findViewById(R.id.exceed_hours);
         DecimalFormat decimalFormat = new DecimalFormat("#0.00"); // 设置保留一位小数的格式
         String manHours = decimalFormat.format(todaySummary.getManHours());
         String averageManHours = decimalFormat.format(todaySummary.getAverageManHours());
@@ -268,8 +271,10 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
         needRepairHoursText.setText(needRepairHours);
         if (todaySummary.getAverageManHours() > 8.5) {
             averageManHoursText.setTextColor(greenColor);
+            exceedText.setText("超出工时(h)");
         } else {
             needRepairHoursText.setTextColor(Color.RED);
+            exceedText.setText("需补工时(h)");
         }
     }
 

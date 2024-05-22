@@ -177,6 +177,7 @@
                             android:textColor="#65CB00"
                             android:text="0.00"/>
                         <TextView
+                            android:id="@+id/exceed_hours"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
