@@ -54,7 +54,7 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
 
     private TextView todayManHoursText;
     private TextView averageManHoursText;
-    private TextView monthManHoursText;
+    private TextView notEnoughEightDays;
     private TextView btnAddClockIn;
     private LinearLayout addClockInView;
     private ClockInRecordSummary todaySummary;
@@ -71,6 +71,9 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
     private TextView needRepairHoursText;
 
     private TextView exceedText;
+
+    List<DailyClockInRecord> dailyClockInRecords;
+
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -98,9 +101,17 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
     }
 
     private void refreshRecord() {
-        List<DailyClockInRecord> dailyClockInRecords = getDailyClockInRecords();
+        dailyClockInRecords = getDailyClockInRecords();
         dailyClockInAdapter = new DailyClockInAdapter(this, dailyClockInRecords, clockInDao, mHandler);
         listView.setAdapter(dailyClockInAdapter);
+        long count = dailyClockInRecords.stream().filter(record -> record.getDayHours() < 8).count();
+        notEnoughEightDays.setText(String.valueOf(count));
+        if (count < 10) {
+            notEnoughEightDays.setTextColor(Color.RED);
+        } else {
+            int greenColor = Color.parseColor("#65CB00");
+            notEnoughEightDays.setTextColor(greenColor);
+        }
     }
 
     private void initData() {
@@ -111,6 +122,7 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
     }
     private void initView() {
         updateDisplaySummary();
+
         backIndex = findViewById(R.id.back_index);
         backIndex.setOnClickListener(this);
 
@@ -133,6 +145,8 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
 
         addClockInLast = findViewById(R.id.add_clock_in_last);
         addClockInLast.setOnClickListener(this);
+
+        notEnoughEightDays = findViewById(R.id.not_enough_eight_days);
     }
     @Override
     public void onClick(View v) {
@@ -252,16 +266,13 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
     private void updateDisplaySummary() {
         todaySummary = clockInDao.getSummary();
         todayManHoursText = findViewById(R.id.today_man_hours);
-        monthManHoursText = findViewById(R.id.month_man_hours);
         averageManHoursText = findViewById(R.id.average_man_hours);
         needRepairHoursText = findViewById(R.id.need_repair_hours);
         exceedText = findViewById(R.id.exceed_hours);
         DecimalFormat decimalFormat = new DecimalFormat("#0.00"); // 设置保留一位小数的格式
         String manHours = decimalFormat.format(todaySummary.getManHours());
         String averageManHours = decimalFormat.format(todaySummary.getAverageManHours());
-        String monthManHours = decimalFormat.format(todaySummary.getMonthManHours());
         todayManHoursText.setText(manHours);
-        monthManHoursText.setText(monthManHours);
         averageManHoursText.setText(averageManHours);
         int greenColor = Color.parseColor("#65CB00");
         if (todaySummary.getManHours() > 8) {
