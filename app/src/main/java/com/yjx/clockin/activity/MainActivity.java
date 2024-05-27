@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void updateDisplaySummary() {
-        todaySummary = clockInDao.getSummary();
+        todaySummary = clockInDao.getSummary(new Date());
         todayManHoursText = findViewById(R.id.today_man_hours);
         monthManHoursText = findViewById(R.id.month_man_hours);
         averageManHoursText = findViewById(R.id.average_man_hours);

@@ -42,9 +42,8 @@ public class ClockInDao {
         return dbReader.query(ClockInConstants.TABLE_NAME_CLOCK_IN_RECORD, projection, selection, selectionArgs, null,null, sortOrder);
     }
 
-    public ClockInRecordSummary getSummary(){
+    public ClockInRecordSummary getSummary(Date date){
         ClockInRecordSummary summary = new ClockInRecordSummary();
-        Date date = new Date();
         getManHours(date, ClockInConstants.COLUMN_NAME_DAY, summary);
         getManHours(date, ClockInConstants.COLUMN_NAME_MONTH, summary);
         return summary;

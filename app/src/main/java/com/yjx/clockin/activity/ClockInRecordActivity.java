@@ -71,9 +71,11 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
     private TextView needRepairHoursText;
 
     private TextView exceedText;
+    private TextView monthPickerText;
 
     List<DailyClockInRecord> dailyClockInRecords;
 
+    private Date date = new Date();
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -106,11 +108,11 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
         listView.setAdapter(dailyClockInAdapter);
         long count = dailyClockInRecords.stream().filter(record -> record.getDayHours() < 8).count();
         notEnoughEightDays.setText(String.valueOf(count));
-        if (count < 10) {
-            notEnoughEightDays.setTextColor(Color.RED);
-        } else {
+        if (count < 7) {
             int greenColor = Color.parseColor("#65CB00");
             notEnoughEightDays.setTextColor(greenColor);
+        } else {
+            notEnoughEightDays.setTextColor(Color.RED);
         }
     }
 
@@ -121,6 +123,10 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
         clockInLastDate = new ClockInDate();
     }
     private void initView() {
+        monthPickerText = findViewById(R.id.month_picker_text);
+        monthPickerText.setText(DateUtils.getDateString(date, ClockInConstants.DATE_FORMAT_YMD));
+        monthPickerText.setOnClickListener(this);
+
         updateDisplaySummary();
 
         backIndex = findViewById(R.id.back_index);
@@ -167,6 +173,9 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
             addClockInView.setVisibility(View.GONE);
             refreshRecord();
             updateDisplaySummary();
+        }
+        if (v.getId() == R.id.month_picker_text) {
+            showRecordDatePickerDialog();
         }
         if (v.getId() == R.id.btn_add_clock_in) {
             if (addClockInView.getVisibility() == View.VISIBLE) {
@@ -234,6 +243,40 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
         datePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY);
         datePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
     }
+
+    private void showRecordDatePickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this, R.style.DialogTheme,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        // 处理选择的日期（例如：更新UI显示）
+                        String day = year + "-"+ DateUtils.appendZeroForDate(monthOfYear + 1)
+                                + "-" + DateUtils.appendZeroForDate(dayOfMonth);
+                        monthPickerText.setText(day);
+                        try {
+                            date = DateUtils.getDateByString(day, ClockInConstants.DATE_FORMAT_YMD);
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                        refreshRecord();
+                        updateDisplaySummary();
+                    }
+                },
+                year,
+                month,
+                day
+        );
+        datePickerDialog.show();
+        datePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.GRAY);
+        datePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+    }
+
     private void showTimePickerDialog(TextView addClockInTime, ClockInDate clockInDate) {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -264,7 +307,7 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
 
 
     private void updateDisplaySummary() {
-        todaySummary = clockInDao.getSummary();
+        todaySummary = clockInDao.getSummary(date);
         todayManHoursText = findViewById(R.id.today_man_hours);
         averageManHoursText = findViewById(R.id.average_man_hours);
         needRepairHoursText = findViewById(R.id.need_repair_hours);
@@ -293,7 +336,6 @@ public class ClockInRecordActivity extends AppCompatActivity implements View.OnC
     @SuppressLint("Range")
     private List<DailyClockInRecord> getDailyClockInRecords(){
         List<DailyClockInRecord> dailyClockInRecords = new ArrayList<>();
-        Date date = new Date();
         String month = DateUtils.getDateString(date, ClockInConstants.DATE_FORMAT_YM);
         Cursor cursor = clockInDao.queryRecord(month, ClockInConstants.COLUMN_NAME_MONTH);
         List<ClockInRecord> clockInRecords = new ArrayList<>();
